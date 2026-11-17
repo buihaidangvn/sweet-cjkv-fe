@@ -1,9 +1,5 @@
-"use client";
-
-import { useRouter, useSearchParams } from "next/navigation";
-import { useJapaneseSearch } from "./hook/useJapaneseSearch";
-import { SearchResult } from "./component/SearchResult";
-import { SearchForm } from "./component/SearchForm";
+import { Suspense } from "react";
+import { SearchPage } from "./component/SearchPage";
 
 /**
  * TODO fix this: The rendering logic is doing too much.
@@ -15,23 +11,10 @@ accent rendering
 dictionary-like display logic
 inline map/set dedupe
  */
-export default function Japanese() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query") ?? "";
-
-  const { result, loading, error } = useJapaneseSearch(query);
-
-  function handleSearch(newQuery: string): void {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("query", newQuery);
-    router.push(`?${params.toString()}`);
-  }
-
+export default function Page() {
   return (
-    <div className="flex flex-col gap-3 h-full">
-      <SearchForm query={query} onSubmit={handleSearch} />
-      <SearchResult result={result} loading={loading} error={error} />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchPage />
+    </Suspense>
   );
 }

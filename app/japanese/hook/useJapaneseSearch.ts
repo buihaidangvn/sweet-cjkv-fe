@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { JapaneseSearchWordControllerSearchWord200Response } from "../../generated-api";
 import { japaneseSearchWordApi } from "../../api/client";

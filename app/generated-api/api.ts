@@ -51,9 +51,9 @@ export interface JapaneseSearchWordControllerSearchWord200ResponseWordsInner {
     'lang'?: string;
     'means'?: Array<JapaneseSearchWordControllerSearchWord200ResponseWordsInnerMeansInner>;
     'han'?: string;
-    'synsets'?: any;
+    'synsets'?: Array<JapaneseSearchWordControllerSearchWord200ResponseWordsInnerSynsetsInner>;
     'type'?: string;
-    'opposite_word'?: any;
+    'opposite_word'?: Array<string>;
     'pronunciation'?: Array<JapaneseSearchWordControllerSearchWord200ResponseWordsInnerPronunciationInner>;
     'match_by'?: string;
     'images'?: Array<string>;
@@ -81,6 +81,14 @@ export interface JapaneseSearchWordControllerSearchWord200ResponseWordsInnerPron
 export interface JapaneseSearchWordControllerSearchWord200ResponseWordsInnerPronunciationInnerTokenizedKanaInner {
     'value'?: string;
     'type'?: string;
+}
+export interface JapaneseSearchWordControllerSearchWord200ResponseWordsInnerSynsetsInner {
+    'pos'?: string;
+    'entry'?: Array<JapaneseSearchWordControllerSearchWord200ResponseWordsInnerSynsetsInnerEntryInner>;
+    'base_form'?: string;
+}
+export interface JapaneseSearchWordControllerSearchWord200ResponseWordsInnerSynsetsInnerEntryInner {
+    'synonym'?: Array<string>;
 }
 
 /**

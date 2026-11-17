@@ -60,6 +60,25 @@ export interface JapaneseSearchWordControllerSearchWord200ResponseWordsInner {
     'images_hanzii'?: Array<string>;
     'images_user'?: Array<string>;
     'total_img'?: number;
+    'comments'?: Array<JapaneseSearchWordControllerSearchWord200ResponseWordsInnerCommentsInner>;
+}
+export interface JapaneseSearchWordControllerSearchWord200ResponseWordsInnerCommentsInner {
+    'dislike'?: number;
+    'like'?: number;
+    'mean'?: string;
+    'reportId'?: number;
+    'status'?: number;
+    'type'?: number;
+    'userId'?: number;
+    'username'?: string;
+    'avatar'?: string;
+    'word'?: string;
+    'wordId'?: string;
+    'type_data'?: string;
+    'dict'?: string;
+    'action'?: any;
+    'is_premium'?: boolean;
+    'is_premium_ai'?: boolean;
 }
 export interface JapaneseSearchWordControllerSearchWord200ResponseWordsInnerMeansInner {
     'mean'?: string;
@@ -100,10 +119,11 @@ export const JapaneseSearchWordApiAxiosParamCreator = function (configuration?: 
          * 
          * @param {string} word 
          * @param {boolean} [cleanFormat] 
+         * @param {boolean} [withComment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        japaneseSearchWordControllerSearchWord: async (word: string, cleanFormat?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        japaneseSearchWordControllerSearchWord: async (word: string, cleanFormat?: boolean, withComment?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'word' is not null or undefined
             assertParamExists('japaneseSearchWordControllerSearchWord', 'word', word)
             const localVarPath = `/japanese/search-word`;
@@ -124,6 +144,10 @@ export const JapaneseSearchWordApiAxiosParamCreator = function (configuration?: 
 
             if (cleanFormat !== undefined) {
                 localVarQueryParameter['cleanFormat'] = cleanFormat;
+            }
+
+            if (withComment !== undefined) {
+                localVarQueryParameter['withComment'] = withComment;
             }
 
             localVarHeaderParameter['Accept'] = 'application/json';
@@ -150,11 +174,12 @@ export const JapaneseSearchWordApiFp = function(configuration?: Configuration) {
          * 
          * @param {string} word 
          * @param {boolean} [cleanFormat] 
+         * @param {boolean} [withComment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async japaneseSearchWordControllerSearchWord(word: string, cleanFormat?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JapaneseSearchWordControllerSearchWord200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.japaneseSearchWordControllerSearchWord(word, cleanFormat, options);
+        async japaneseSearchWordControllerSearchWord(word: string, cleanFormat?: boolean, withComment?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JapaneseSearchWordControllerSearchWord200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.japaneseSearchWordControllerSearchWord(word, cleanFormat, withComment, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['JapaneseSearchWordApi.japaneseSearchWordControllerSearchWord']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -172,11 +197,12 @@ export const JapaneseSearchWordApiFactory = function (configuration?: Configurat
          * 
          * @param {string} word 
          * @param {boolean} [cleanFormat] 
+         * @param {boolean} [withComment] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        japaneseSearchWordControllerSearchWord(word: string, cleanFormat?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<JapaneseSearchWordControllerSearchWord200Response> {
-            return localVarFp.japaneseSearchWordControllerSearchWord(word, cleanFormat, options).then((request) => request(axios, basePath));
+        japaneseSearchWordControllerSearchWord(word: string, cleanFormat?: boolean, withComment?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<JapaneseSearchWordControllerSearchWord200Response> {
+            return localVarFp.japaneseSearchWordControllerSearchWord(word, cleanFormat, withComment, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -189,11 +215,12 @@ export class JapaneseSearchWordApi extends BaseAPI {
      * 
      * @param {string} word 
      * @param {boolean} [cleanFormat] 
+     * @param {boolean} [withComment] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public japaneseSearchWordControllerSearchWord(word: string, cleanFormat?: boolean, options?: RawAxiosRequestConfig) {
-        return JapaneseSearchWordApiFp(this.configuration).japaneseSearchWordControllerSearchWord(word, cleanFormat, options).then((request) => request(this.axios, this.basePath));
+    public japaneseSearchWordControllerSearchWord(word: string, cleanFormat?: boolean, withComment?: boolean, options?: RawAxiosRequestConfig) {
+        return JapaneseSearchWordApiFp(this.configuration).japaneseSearchWordControllerSearchWord(word, cleanFormat, withComment, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

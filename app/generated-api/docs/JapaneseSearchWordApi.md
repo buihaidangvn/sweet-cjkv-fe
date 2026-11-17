@@ -23,10 +23,12 @@ const apiInstance = new JapaneseSearchWordApi(configuration);
 
 let word: string; // (default to undefined)
 let cleanFormat: boolean; // (optional) (default to undefined)
+let withComment: boolean; // (optional) (default to undefined)
 
 const { status, data } = await apiInstance.japaneseSearchWordControllerSearchWord(
     word,
-    cleanFormat
+    cleanFormat,
+    withComment
 );
 ```
 
@@ -36,6 +38,7 @@ const { status, data } = await apiInstance.japaneseSearchWordControllerSearchWor
 |------------- | ------------- | ------------- | -------------|
 | **word** | [**string**] |  | defaults to undefined|
 | **cleanFormat** | [**boolean**] |  | (optional) defaults to undefined|
+| **withComment** | [**boolean**] |  | (optional) defaults to undefined|
 
 
 ### Return type

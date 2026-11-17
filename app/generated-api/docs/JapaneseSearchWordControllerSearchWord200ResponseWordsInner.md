@@ -27,6 +27,7 @@ Name | Type | Description | Notes
 **images_hanzii** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
 **images_user** | **Array&lt;string&gt;** |  | [optional] [default to undefined]
 **total_img** | **number** |  | [optional] [default to undefined]
+**comments** | [**Array&lt;JapaneseSearchWordControllerSearchWord200ResponseWordsInnerCommentsInner&gt;**](JapaneseSearchWordControllerSearchWord200ResponseWordsInnerCommentsInner.md) |  | [optional] [default to undefined]
 
 ## Example
 
@@ -56,6 +57,7 @@ const instance: JapaneseSearchWordControllerSearchWord200ResponseWordsInner = {
     images_hanzii,
     images_user,
     total_img,
+    comments,
 };
 ```
 

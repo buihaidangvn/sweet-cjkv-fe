@@ -1,52 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { JapaneseSearchWordControllerSearchWord200Response } from "../generated-api";
-import { japaneseSearchWordApi } from "../api/client";
+import { useState } from "react";
 import { splitMora } from "../helper/split-mora";
 import { useRouter, useSearchParams } from "next/navigation";
+import { calculateAccentBorder } from "./util/calculateAccentBorder";
+import { useJapaneseSearch } from "./hook/useJapaneseSearch";
 
-// TODO add comment
-const calculateBorderClass = (
-  mora: string | undefined,
-  moraIndex: number,
-  accent: string | undefined,
-): string => {
-  if (!mora || moraIndex < 0 || !accent) return "";
-  const correspongingAccent = accent?.at(moraIndex);
-  if (!correspongingAccent) return "";
-  const nextAccent = accent?.at(moraIndex + 1);
-  if (!nextAccent) return "";
-
-  let classArr: string[] = [];
-  switch (correspongingAccent) {
-    case "H":
-      classArr.push("border-t");
-      break;
-    case "L":
-      classArr.push("border-b");
-      break;
-    default:
-      return "";
-  }
-  if (nextAccent === "-") {
-    const finalAccent = accent.at(moraIndex + 2);
-    if (finalAccent) {
-      const isLowToHigh = correspongingAccent === "L" && finalAccent === "H";
-      const isHighToLow = correspongingAccent === "H" && finalAccent === "L";
-      if (isHighToLow || isLowToHigh) {
-        classArr.push("border-r");
-      }
-    }
-  } else {
-    const isLowToHigh = correspongingAccent === "L" && nextAccent === "H";
-    const isHighToLow = correspongingAccent === "H" && nextAccent === "L";
-    if (isHighToLow || isLowToHigh) {
-      classArr.push("border-r");
-    }
-  }
-  return classArr.join(" ");
-};
 /**
  * TODO fix this: The rendering logic is doing too much.
  * form management
@@ -63,53 +22,7 @@ export default function Japanese() {
   const query = searchParams.get("query") ?? "";
   const [input, setInput] = useState(query);
 
-  const [result, setResult] =
-    useState<JapaneseSearchWordControllerSearchWord200Response | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<any>(null);
-
-  useEffect(() => {
-    setInput(query);
-    const controller = new AbortController();
-
-    async function fetchResults() {
-      if (!query.trim()) {
-        setResult(null);
-        setLoading(false);
-        setError(null);
-        return;
-      }
-
-      // search action dispatch
-      setResult(null);
-      setLoading(true);
-      setError(null);
-      try {
-        const cleanFormat = false;
-        const withComment = true;
-        const { data } =
-          await japaneseSearchWordApi.japaneseSearchWordControllerSearchWord(
-            query,
-            cleanFormat,
-            withComment,
-            { signal: controller.signal },
-          );
-        // search success
-        setResult(data);
-      } catch (err: any) {
-        // search error
-        if (controller.signal.aborted) return;
-        setError(err);
-        console.error(err);
-      } finally {
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    }
-    fetchResults();
-    return () => {
-      controller.abort();
-    };
-  }, [query]);
+  const { result, loading, error } = useJapaneseSearch(query);
 
   async function updateQueryParam(e: React.SubmitEvent) {
     e.preventDefault();
@@ -140,7 +53,7 @@ export default function Japanese() {
 
       <div className="border rounded p-1 px-2 grow text-wrap overflow-x-auto overflow-y-scroll">
         {loading && <p>Searching...</p>}
-        {error && <p className="text-red-500">Some thing went wrong...</p>}
+        {!!error && <p className="text-red-500">Some thing went wrong...</p>}
         {result && (
           <>
             <div>
@@ -166,7 +79,7 @@ export default function Japanese() {
                                 (mora, moraIndex) => (
                                   <span
                                     key={moraIndex}
-                                    className={calculateBorderClass(
+                                    className={calculateAccentBorder(
                                       mora,
                                       moraIndex,
                                       pronunc.accent,

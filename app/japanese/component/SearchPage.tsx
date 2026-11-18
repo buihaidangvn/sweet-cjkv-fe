@@ -41,17 +41,19 @@ export function SearchPage() {
 
   return (
     <div className="flex flex-col gap-3 h-full">
+      <div className="border rounded p-1 px-2 grow text-wrap overflow-x-auto overflow-y-scroll">
+        <SearchResult
+          result={result}
+          loading={loading}
+          error={error}
+          onWordClick={handleSearch}
+        />
+      </div>
+
       <SearchForm
         query={query}
         onSubmit={handleSearch}
         searchInputRef={searchInputRef}
-      />
-
-      <SearchResult
-        result={result}
-        loading={loading}
-        error={error}
-        onWordClick={handleSearch}
       />
     </div>
   );

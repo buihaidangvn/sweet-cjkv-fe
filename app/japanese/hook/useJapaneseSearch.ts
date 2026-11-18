@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { JapaneseSearchWordControllerSearchWord200Response } from "../../generated-api";
 import { japaneseSearchWordApi } from "../../api/client";
+import axios from "axios";
 
 export function useJapaneseSearch(query: string) {
   const [result, setResult] =
@@ -36,7 +37,10 @@ export function useJapaneseSearch(query: string) {
 
         setResult(data);
       } catch (err) {
-        if (!controller.signal.aborted) {
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          setResult({});
+        } else if (!controller.signal.aborted) {
+          console.log(err);
           setError(err);
         }
       } finally {

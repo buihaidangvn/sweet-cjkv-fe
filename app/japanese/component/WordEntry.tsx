@@ -75,7 +75,7 @@ export function WordEntry({ word, onWordClick }: Props) {
       {/* line 3 */}
       {word.synsets && (
         <div>
-          <span className="italic" title="Synonym / Đồng nghĩa">
+          <span className="italic text-blue-600" title="Synonym / Đồng nghĩa">
             Syn:&nbsp;
           </span>
           {uniq(
@@ -103,7 +103,7 @@ export function WordEntry({ word, onWordClick }: Props) {
       {/* line 4 */}
       {word.opposite_word && (
         <div>
-          <span className="italic" title="Antonym / Trái nghĩa">
+          <span className="italic text-red-600" title="Antonym / Trái nghĩa">
             Ant:&nbsp;
           </span>
           {word.opposite_word

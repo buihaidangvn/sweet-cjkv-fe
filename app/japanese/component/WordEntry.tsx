@@ -3,6 +3,7 @@ import { splitMora } from "@/app/helper/split-mora";
 import { uniq, uniqBy } from "lodash-es";
 import { calculateAccentBorder } from "../util/calculateAccentBorder";
 import React from "react";
+import { ClickableWordList } from "./ClickableWordList";
 
 type Props = {
   word: JapaneseSearchWordControllerSearchWord200ResponseWordsInner;
@@ -78,25 +79,18 @@ export function WordEntry({ word, onWordClick }: Props) {
           <span className="italic text-blue-600" title="Synonym / Đồng nghĩa">
             Syn:&nbsp;
           </span>
-          {uniq(
-            word.synsets
+          <ClickableWordList
+            entries={word.synsets
               .map((synset) => synset.entry)
               .flat()
               .map((entry) => entry?.synonym)
               .flat()
-              .filter((w) => w !== undefined),
-          ).map((w, index) => (
-            <React.Fragment key={w}>
-              {index > 0 && "; "}
-              <button
-                type="button"
-                onClick={() => onWordClick(w)}
-                className="hover:underline hover:underline-offset-2 hover:cursor-pointer"
-              >
-                {w}
-              </button>
-            </React.Fragment>
-          ))}
+              .filter((w) => w !== undefined)
+              .map((w) => ({
+                word: w,
+              }))}
+            onWordClick={onWordClick}
+          />
         </div>
       )}
 
@@ -106,20 +100,14 @@ export function WordEntry({ word, onWordClick }: Props) {
           <span className="italic text-red-600" title="Antonym / Trái nghĩa">
             Ant:&nbsp;
           </span>
-          {word.opposite_word
-            .filter((w) => w !== undefined)
-            .map((w, index) => (
-              <React.Fragment key={w}>
-                {index > 0 && "; "}
-                <button
-                  type="button"
-                  onClick={() => onWordClick(w)}
-                  className="hover:underline hover:underline-offset-2 hover:cursor-pointer"
-                >
-                  {w}
-                </button>
-              </React.Fragment>
-            ))}
+          <ClickableWordList
+            entries={word.opposite_word
+              .filter((w) => w !== undefined)
+              .map((w) => ({
+                word: w,
+              }))}
+            onWordClick={onWordClick}
+          />
         </div>
       )}
     </div>

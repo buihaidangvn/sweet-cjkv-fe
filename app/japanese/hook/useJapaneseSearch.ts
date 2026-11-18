@@ -1,15 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { JapaneseSearchWordControllerSearchWord200Response } from "../../generated-api";
-import { japaneseSearchWordApi } from "../../api/client";
+import {
+  JapaneseSearchWordApi,
+  JapaneseSearchWordControllerSearchWord200Response,
+} from "../../generated-api";
 import axios from "axios";
+import { configuration } from "@/app/api/client";
 
 export function useJapaneseSearch(query: string) {
   const [result, setResult] =
     useState<JapaneseSearchWordControllerSearchWord200Response | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
+  const api = new JapaneseSearchWordApi(configuration);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -27,13 +31,12 @@ export function useJapaneseSearch(query: string) {
       setError(null);
 
       try {
-        const { data } =
-          await japaneseSearchWordApi.japaneseSearchWordControllerSearchWord(
-            query,
-            false,
-            true,
-            { signal: controller.signal },
-          );
+        const { data } = await api.japaneseSearchWordControllerSearchWord(
+          query,
+          false,
+          true,
+          { signal: controller.signal },
+        );
 
         setResult(data);
       } catch (err) {

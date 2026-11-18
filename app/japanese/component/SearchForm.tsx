@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 type Props = {
   query: string;
   onSubmit: (value: string) => void;
+  searchInputRef: React.RefObject<HTMLInputElement | null>;
 };
 
-export function SearchForm({ query, onSubmit }: Props) {
+export function SearchForm({ query, onSubmit, searchInputRef }: Props) {
   const [input, setInput] = useState(query);
 
   useEffect(() => {
@@ -21,6 +22,7 @@ export function SearchForm({ query, onSubmit }: Props) {
   return (
     <form onSubmit={handleSubmit} className="flex flex-row gap-3">
       <input
+        ref={searchInputRef}
         placeholder="Search..."
         name="searchQuery"
         value={input}

@@ -5,9 +5,10 @@ type Props = {
   result: JapaneseSearchWordControllerSearchWord200Response | null;
   loading: boolean;
   error: unknown;
+  onWordClick: (value: string) => void;
 };
 
-export function SearchResult({ result, loading, error }: Props) {
+export function SearchResult({ result, loading, error, onWordClick }: Props) {
   if (loading) return <p>Searching...</p>;
   if (error) return <p className="text-red-500">Something went wrong...</p>;
   if (!result) return <p>Search something...</p>;
@@ -16,7 +17,7 @@ export function SearchResult({ result, loading, error }: Props) {
   return (
     <div className="border rounded p-1 px-2 grow text-wrap overflow-x-auto overflow-y-scroll">
       {result.words?.map((word, wordIndex) => (
-        <WordEntry key={wordIndex} word={word} />
+        <WordEntry key={wordIndex} word={word} onWordClick={onWordClick} />
       ))}
     </div>
   );

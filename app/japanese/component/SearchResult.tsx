@@ -1,11 +1,9 @@
-import { JapaneseSearchWordControllerSearchWord200Response } from "@/app/generated-api";
 import { WordEntry } from "./WordEntry";
 import { ClickableWordList } from "./ClickableWordList";
-import React from "react";
-import { ClickableWord } from "./ClickableWord";
+import { JapaneseSearchWordResponseDto } from "@/app/generated-api";
 
 type Props = {
-  result: JapaneseSearchWordControllerSearchWord200Response | null;
+  result: JapaneseSearchWordResponseDto | null;
   loading: boolean;
   error: unknown;
   onWordClick: (value: string) => void;
@@ -30,7 +28,7 @@ export function SearchResult({ result, loading, error, onWordClick }: Props) {
               .filter((w) => !!w.word)
               .map((w) => ({
                 word: w.word ?? "",
-                hoverContent: [w.han, w.phonetic, w.short_mean]
+                hoverContent: [w.han, w.phonetic, w.mean]
                   .filter(Boolean)
                   .join(" | "),
               }))}

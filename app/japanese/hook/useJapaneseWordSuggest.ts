@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { JapaneseSuggestWordApi } from "@/app/generated-api";
+import { DefaultApi } from "@/app/generated-api";
 import { configuration } from "@/app/api/client";
 
 export function useJapaneseWordSuggest(query: string, debounceMs: number) {
@@ -16,7 +16,7 @@ export function useJapaneseWordSuggest(query: string, debounceMs: number) {
   >(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  const api = new JapaneseSuggestWordApi(configuration);
+  const api = new DefaultApi(configuration);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -32,10 +32,9 @@ export function useJapaneseWordSuggest(query: string, debounceMs: number) {
       setError(null);
 
       try {
-        const { data } = await api.japaneseSuggestWordControllerSuggestWord(
-          query,
-          { signal: controller.signal },
-        );
+        const { data } = await api.japaneseSuggestWordGet(query, {
+          signal: controller.signal,
+        });
 
         const splited = data.map((f) => f.split("#"));
 

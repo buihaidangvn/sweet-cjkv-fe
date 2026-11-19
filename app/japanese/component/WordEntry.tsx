@@ -1,12 +1,11 @@
-import { JapaneseSearchWordControllerSearchWord200ResponseWordsInner } from "@/app/generated-api";
 import { splitMora } from "@/app/helper/split-mora";
-import { uniq, uniqBy } from "lodash-es";
 import { calculateAccentBorder } from "../util/calculateAccentBorder";
-import React from "react";
 import { ClickableWordList } from "./ClickableWordList";
+import { JapaneseSearchWordResponseDtoWord } from "@/app/generated-api";
+import { uniqBy } from "lodash-es";
 
 type Props = {
-  word: JapaneseSearchWordControllerSearchWord200ResponseWordsInner;
+  word: JapaneseSearchWordResponseDtoWord;
   onWordClick: (value: string) => void;
 };
 
@@ -27,7 +26,7 @@ export function WordEntry({ word, onWordClick }: Props) {
         )}
 
         {/* phát âm list */}
-        {word.pronunciation?.length && (
+        {word.pronunciation.length && (
           <>
             <span> </span>
             <span className="inline-flex gap-2 w-fit text-sm">
@@ -54,58 +53,50 @@ export function WordEntry({ word, onWordClick }: Props) {
         )}
 
         {/* nghĩa tiếng việt */}
-        {word.short_mean && (
+        {word.mean && (
           <>
             <span> : </span>
-            <span>{word.short_mean}</span>
+            <span>{word.mean}</span>
           </>
         )}
       </div>
       {/* end of line 1 */}
 
       {/* line 2 */}
-      {word.comments?.length && (
+      {!!word.comment.length && (
         <div>
           &#40;
-          <span className="text-blue-600">{word.comments[0].like ?? 0}</span>/
-          <span className="text-red-600">{word.comments[0].dislike ?? 0}</span>
-          &#41; {word.comments[0].mean}
+          <span className="text-blue-600">{word.comment[0].like ?? 0}</span>/
+          <span className="text-red-600">{word.comment[0].dislike ?? 0}</span>
+          &#41; {word.comment[0].content}
         </div>
       )}
 
       {/* line 3 */}
-      {word.synsets && (
+      {!!word.synonym.length && (
         <div>
           <span className="italic text-blue-600" title="Synonym / Đồng nghĩa">
             Syn:&nbsp;
           </span>
           <ClickableWordList
-            entries={word.synsets
-              .map((synset) => synset.entry)
-              .flat()
-              .map((entry) => entry?.synonym)
-              .flat()
-              .filter((w) => w !== undefined)
-              .map((w) => ({
-                word: w,
-              }))}
+            entries={word.synonym.map((w) => ({
+              word: w,
+            }))}
             onWordClick={onWordClick}
           />
         </div>
       )}
 
       {/* line 4 */}
-      {word.opposite_word && (
+      {!!word.antonym.length && (
         <div>
           <span className="italic text-red-600" title="Antonym / Trái nghĩa">
             Ant:&nbsp;
           </span>
           <ClickableWordList
-            entries={word.opposite_word
-              .filter((w) => w !== undefined)
-              .map((w) => ({
-                word: w,
-              }))}
+            entries={word.antonym.map((w) => ({
+              word: w,
+            }))}
             onWordClick={onWordClick}
           />
         </div>

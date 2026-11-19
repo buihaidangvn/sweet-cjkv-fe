@@ -1,5 +1,5 @@
-import { Configuration, JapaneseSearchWordApi } from "../generated-api";
+import { Configuration } from "../generated-api";
 
 export const configuration = new Configuration({
-  basePath: "http://localhost:3000",
+  basePath: "http://localhost:5117",
 });

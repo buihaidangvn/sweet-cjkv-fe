@@ -1,0 +1,36 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  build_fe_artifact:
+    name: Build FE
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: npm
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build application
+      - name: Build FE
+        run: npm run build
+
+      # 5. Upload build output
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Asdf
+          path: out/
+          include-hidden-files: true
+          retention-days: 7

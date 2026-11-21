@@ -33,10 +33,10 @@ export interface JapaneseSearchWordResponseDto {
     'suggestWords': Array<JapaneseSearchWordResponseDtoSuggestWord>;
 }
 export interface JapaneseSearchWordResponseDtoSuggestWord {
-    'word': string | null;
-    'han': string | null;
-    'phonetic': string | null;
-    'mean': string | null;
+    'word': string;
+    'han': string;
+    'phonetic': string;
+    'mean': string;
 }
 export interface JapaneseSearchWordResponseDtoWord {
     'word': string;
@@ -56,11 +56,16 @@ export interface JapaneseSearchWordResponseDtoWordPronunciation {
     'kana': string;
     'accent': string;
 }
+export interface JapaneseSuggestWordResponseDto {
+    'word': string;
+    'phonetic': string;
+    'mean': string;
+}
 
 /**
- * DefaultApi - axios parameter creator
+ * JapaneseApi - axios parameter creator
  */
-export const DefaultApiAxiosParamCreator = function (configuration?: Configuration) {
+export const JapaneseApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
@@ -68,9 +73,9 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        japaneseSearchWordWordGet: async (word: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        searchWord: async (word: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'word' is not null or undefined
-            assertParamExists('japaneseSearchWordWordGet', 'word', word)
+            assertParamExists('searchWord', 'word', word)
             const localVarPath = `/japanese/search-word/{word}`
                 .replace('{word}', encodeURIComponent(String(word)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -101,9 +106,9 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        japaneseSuggestWordGet: async (word: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        suggestWord: async (word: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'word' is not null or undefined
-            assertParamExists('japaneseSuggestWordGet', 'word', word)
+            assertParamExists('suggestWord', 'word', word)
             const localVarPath = `/japanese/suggest/{word}`
                 .replace('{word}', encodeURIComponent(String(word)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -132,10 +137,10 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
 };
 
 /**
- * DefaultApi - functional programming interface
+ * JapaneseApi - functional programming interface
  */
-export const DefaultApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = DefaultApiAxiosParamCreator(configuration)
+export const JapaneseApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = JapaneseApiAxiosParamCreator(configuration)
     return {
         /**
          * 
@@ -143,10 +148,10 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async japaneseSearchWordWordGet(word: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JapaneseSearchWordResponseDto>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.japaneseSearchWordWordGet(word, options);
+        async searchWord(word: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<JapaneseSearchWordResponseDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.searchWord(word, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.japaneseSearchWordWordGet']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['JapaneseApi.searchWord']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -155,20 +160,20 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async japaneseSuggestWordGet(word: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<string>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.japaneseSuggestWordGet(word, options);
+        async suggestWord(word: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<JapaneseSuggestWordResponseDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.suggestWord(word, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.japaneseSuggestWordGet']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['JapaneseApi.suggestWord']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
 };
 
 /**
- * DefaultApi - factory interface
+ * JapaneseApi - factory interface
  */
-export const DefaultApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = DefaultApiFp(configuration)
+export const JapaneseApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = JapaneseApiFp(configuration)
     return {
         /**
          * 
@@ -176,8 +181,8 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        japaneseSearchWordWordGet(word: string, options?: RawAxiosRequestConfig): AxiosPromise<JapaneseSearchWordResponseDto> {
-            return localVarFp.japaneseSearchWordWordGet(word, options).then((request) => request(axios, basePath));
+        searchWord(word: string, options?: RawAxiosRequestConfig): AxiosPromise<JapaneseSearchWordResponseDto> {
+            return localVarFp.searchWord(word, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -185,24 +190,24 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        japaneseSuggestWordGet(word: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<string>> {
-            return localVarFp.japaneseSuggestWordGet(word, options).then((request) => request(axios, basePath));
+        suggestWord(word: string, options?: RawAxiosRequestConfig): AxiosPromise<Array<JapaneseSuggestWordResponseDto>> {
+            return localVarFp.suggestWord(word, options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * DefaultApi - object-oriented interface
+ * JapaneseApi - object-oriented interface
  */
-export class DefaultApi extends BaseAPI {
+export class JapaneseApi extends BaseAPI {
     /**
      * 
      * @param {string} word 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public japaneseSearchWordWordGet(word: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).japaneseSearchWordWordGet(word, options).then((request) => request(this.axios, this.basePath));
+    public searchWord(word: string, options?: RawAxiosRequestConfig) {
+        return JapaneseApiFp(this.configuration).searchWord(word, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -211,8 +216,8 @@ export class DefaultApi extends BaseAPI {
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      */
-    public japaneseSuggestWordGet(word: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).japaneseSuggestWordGet(word, options).then((request) => request(this.axios, this.basePath));
+    public suggestWord(word: string, options?: RawAxiosRequestConfig) {
+        return JapaneseApiFp(this.configuration).suggestWord(word, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

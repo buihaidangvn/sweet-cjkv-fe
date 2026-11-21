@@ -2,21 +2,19 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { DefaultApi } from "@/app/generated-api";
+import {
+  JapaneseApi,
+  JapaneseSuggestWordResponseDto,
+} from "@/app/generated-api";
 import { configuration } from "@/app/api/client";
 
 export function useJapaneseWordSuggest(query: string, debounceMs: number) {
   const [suggestlist, setSuggestlist] = useState<
-    | {
-        word: string;
-        pronunciation: string;
-        mean: string;
-      }[]
-    | null
+    JapaneseSuggestWordResponseDto[] | null
   >(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  const api = new DefaultApi(configuration);
+  const api = new JapaneseApi(configuration);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -32,19 +30,11 @@ export function useJapaneseWordSuggest(query: string, debounceMs: number) {
       setError(null);
 
       try {
-        const { data } = await api.japaneseSuggestWordGet(query, {
+        const { data } = await api.suggestWord(query, {
           signal: controller.signal,
         });
 
-        const splited = data.map((f) => f.split("#"));
-
-        setSuggestlist(
-          splited.map((entry) => ({
-            word: entry[0] ?? "",
-            pronunciation: entry[1] ?? "",
-            mean: entry[2] ?? "",
-          })),
-        );
+        setSuggestlist(data);
       } catch (err) {
         if (axios.isAxiosError(err) && err.response?.status === 404) {
           setSuggestlist([]);

@@ -5,12 +5,13 @@ api.ts
 base.ts
 common.ts
 configuration.ts
-docs/DefaultApi.md
+docs/JapaneseApi.md
 docs/JapaneseSearchWordCommentResponseDto.md
 docs/JapaneseSearchWordResponseDto.md
 docs/JapaneseSearchWordResponseDtoSuggestWord.md
 docs/JapaneseSearchWordResponseDtoWord.md
 docs/JapaneseSearchWordResponseDtoWordComment.md
 docs/JapaneseSearchWordResponseDtoWordPronunciation.md
+docs/JapaneseSuggestWordResponseDto.md
 git_push.sh
 index.ts

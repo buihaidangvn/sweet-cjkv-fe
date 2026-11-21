@@ -1,30 +1,30 @@
-# DefaultApi
+# JapaneseApi
 
 All URIs are relative to *http://localhost*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**japaneseSearchWordWordGet**](#japanesesearchwordwordget) | **GET** /japanese/search-word/{word} | |
-|[**japaneseSuggestWordGet**](#japanesesuggestwordget) | **GET** /japanese/suggest/{word} | |
+|[**searchWord**](#searchword) | **GET** /japanese/search-word/{word} | |
+|[**suggestWord**](#suggestword) | **GET** /japanese/suggest/{word} | |
 
-# **japaneseSearchWordWordGet**
-> JapaneseSearchWordResponseDto japaneseSearchWordWordGet()
+# **searchWord**
+> JapaneseSearchWordResponseDto searchWord()
 
 
 ### Example
 
 ```typescript
 import {
-    DefaultApi,
+    JapaneseApi,
     Configuration
 } from './api';
 
 const configuration = new Configuration();
-const apiInstance = new DefaultApi(configuration);
+const apiInstance = new JapaneseApi(configuration);
 
 let word: string; // (default to undefined)
 
-const { status, data } = await apiInstance.japaneseSearchWordWordGet(
+const { status, data } = await apiInstance.searchWord(
     word
 );
 ```
@@ -57,24 +57,24 @@ No authorization required
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **japaneseSuggestWordGet**
-> Array<string> japaneseSuggestWordGet()
+# **suggestWord**
+> Array<JapaneseSuggestWordResponseDto> suggestWord()
 
 
 ### Example
 
 ```typescript
 import {
-    DefaultApi,
+    JapaneseApi,
     Configuration
 } from './api';
 
 const configuration = new Configuration();
-const apiInstance = new DefaultApi(configuration);
+const apiInstance = new JapaneseApi(configuration);
 
 let word: string; // (default to undefined)
 
-const { status, data } = await apiInstance.japaneseSuggestWordGet(
+const { status, data } = await apiInstance.suggestWord(
     word
 );
 ```
@@ -88,7 +88,7 @@ const { status, data } = await apiInstance.japaneseSuggestWordGet(
 
 ### Return type
 
-**Array<string>**
+**Array<JapaneseSuggestWordResponseDto>**
 
 ### Authorization
 

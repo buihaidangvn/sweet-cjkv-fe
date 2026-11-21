@@ -54,10 +54,10 @@ export function SearchForm({ query, onSubmit, searchInputRef }: Props) {
                 }}
               >
                 <b>{suggest.word}</b>
-                {suggest.pronunciation && (
+                {suggest.phonetic && (
                   <>
                     &nbsp;
-                    <span className="text-sm">{suggest.pronunciation}</span>
+                    <span className="text-sm">{suggest.phonetic}</span>
                   </>
                 )}
                 {suggest.mean && (

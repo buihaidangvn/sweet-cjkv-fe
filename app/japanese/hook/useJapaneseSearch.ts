@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DefaultApi, JapaneseSearchWordResponseDto } from "../../generated-api";
+import {
+  JapaneseApi,
+  JapaneseSearchWordResponseDto,
+} from "../../generated-api";
 import axios from "axios";
 import { configuration } from "@/app/api/client";
 
@@ -11,7 +14,7 @@ export function useJapaneseSearch(query: string) {
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  const api = new DefaultApi(configuration);
+  const api = new JapaneseApi(configuration);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -29,7 +32,7 @@ export function useJapaneseSearch(query: string) {
       setError(null);
 
       try {
-        const { data } = await api.japaneseSearchWordWordGet(query, {
+        const { data } = await api.searchWord(query, {
           signal: controller.signal,
         });
 

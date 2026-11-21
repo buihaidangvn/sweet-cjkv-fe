@@ -1,0 +1,74 @@
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read # Read your repository source code. Needed by checkout.
+  pages: write # Upload and deploy content to GitHub Pages.
+  id-token: write # Generate an OIDC token to authenticate the deployment.
+  # GitHub Pages deployment uses OpenID Connect (OIDC) to authenticate the GitHub Actions workflow.
+  # Instead of storing a GitHub access token or password in your repository secrets, GitHub generates a short-lived identity token.
+  # The deployment action uses that token to prove that it's an authorized workflow.
+
+# This controls how multiple workflow executions interact. Imagine this sequence:
+# 1. You push commit A.
+# 2. Build A starts.
+# 3. You push commit B before A finishes.
+# 4. Build B starts.
+# Without concurrency control, both deployments could potentially compete.
+concurrency:
+  group: pages # All workflows using this concurrency group belong to the same group. Think of it as a shared deployment lock.
+  cancel-in-progress: false # Don't cancel a currently running workflow just because another workflow enters the same concurrency group. It will be queued
+
+jobs:
+  build_fe_artifact:
+    name: Build FE
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          cache: npm
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Build application
+      - name: Build FE
+        run: npm run build
+
+      # 5. Upload build output
+      # - name: Upload build artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: Asdf
+      #     path: out/
+      #     include-hidden-files: true
+      #     retention-days: 7
+
+      # 5. Deploy
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./out
+
+  deploy_fe_artifact:
+    needs: build_fe_artifact
+    runs-on: ubuntu-latest
+
+    environment: # this job is deploying to an environment named github-pages
+    # example of env: development, staging, production, github-pages
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }} # this deployment here refers to the id: deployment several lines under this
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -26,13 +26,13 @@ export function WordEntry({ word, onWordClick }: Props) {
         )}
 
         {/* phát âm list */}
-        {word.pronunciation.length && (
+        {!!word.pronunciation.length && (
           <>
             <span> </span>
             <span className="inline-flex gap-2 w-fit text-sm">
               {uniqBy(word.pronunciation, (w) =>
                 JSON.stringify([w.accent, w.kana]),
-              )?.map((pronunc, pronuncIndex) => (
+              ).map((pronunc, pronuncIndex) => (
                 <span key={pronuncIndex}>
                   {splitMora(pronunc.kana).map((mora, moraIndex) => (
                     <span
@@ -66,8 +66,8 @@ export function WordEntry({ word, onWordClick }: Props) {
       {!!word.comment.length && (
         <div>
           &#40;
-          <span className="text-blue-600">{word.comment[0].like ?? 0}</span>/
-          <span className="text-red-600">{word.comment[0].dislike ?? 0}</span>
+          <span className="text-blue-600">{word.comment[0].like}</span>/
+          <span className="text-red-600">{word.comment[0].dislike}</span>
           &#41; {word.comment[0].content}
         </div>
       )}

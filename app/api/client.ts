@@ -1,5 +1,5 @@
 import { Configuration } from "../generated-api";
 
 export const configuration = new Configuration({
-  basePath: "http://localhost:5117",
+  basePath: process.env.NEXT_PUBLIC_API_BASE_URL,
 });

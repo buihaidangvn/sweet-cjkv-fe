@@ -24,6 +24,9 @@ jobs:
     name: Build FE
     runs-on: ubuntu-latest
 
+    env:
+      NEXT_PUBLIC_API_BASE_URL: ${{ vars.NEXT_PUBLIC_API_BASE_URL }}
+
     steps:
       # 1. Checkout repository
       - name: Checkout code
@@ -64,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment: # this job is deploying to an environment named github-pages
-    # example of env: development, staging, production, github-pages
+      # example of env: development, staging, production, github-pages
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }} # this deployment here refers to the id: deployment several lines under this
 

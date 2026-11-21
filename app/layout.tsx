@@ -8,7 +8,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
-      <body className="p-3 h-screen">{children}</body>
+      <body className="p-3" style={{ height: "100dvh" }}>
+        {children}
+      </body>
     </html>
   );
 }

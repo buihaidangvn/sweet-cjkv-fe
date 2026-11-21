@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
+  allowedDevOrigins: ["192.168.100.19"],
   output: "export",
 };
 

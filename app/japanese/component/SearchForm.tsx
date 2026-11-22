@@ -23,27 +23,28 @@ export function SearchForm({ query, onSubmit, searchInputRef }: Props) {
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
+    setShouldShowSuggestList(false);
     onSubmit(input.trim());
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-row gap-3">
-      <div className="relative grow">
+      <div className="relative grow" ref={divRef}>
         <input
           ref={searchInputRef}
           placeholder="Search..."
           name="searchQuery"
           value={input}
           onFocus={() => setShouldShowSuggestList(true)}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={(e) => {
+            setShouldShowSuggestList(true);
+            setInput(e.target.value);
+          }}
           className="w-full border rounded p-1 px-2 grow"
         />
 
         {shouldShowSuggestList && !!suggestlist?.length && (
-          <div
-            className="absolute bottom-full w-full border rounded bg-white"
-            ref={divRef}
-          >
+          <div className="absolute bottom-full w-full border rounded bg-white">
             {suggestlist.map((suggest, index) => (
               <div
                 key={index}

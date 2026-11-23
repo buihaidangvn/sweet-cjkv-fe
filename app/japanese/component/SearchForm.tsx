@@ -86,11 +86,11 @@ export function SearchForm({
 
   const activeItems = useMemo(() => {
     if (dropdown.type === "suggest") {
-      return (suggestlist ?? []).slice().reverse();
+      return (suggestlist ?? []).slice();
     }
 
     if (dropdown.type === "history") {
-      return history.slice().reverse();
+      return history.slice();
     }
 
     return [];
@@ -198,7 +198,7 @@ export function SearchForm({
         {dropdown.type === "suggest" &&
           !!activeItems.every((i) => typeof i !== "string") &&
           !!activeItems.length && (
-            <div className="absolute bottom-full w-full border rounded bg-white">
+            <div className="absolute top-full w-full border rounded bg-white">
               <SuggestList
                 suggestList={activeItems}
                 selectedIndex={dropdown.selectedIndex}
@@ -214,7 +214,7 @@ export function SearchForm({
 
         {dropdown.type === "history" &&
           !!activeItems.every((i) => typeof i === "string") && (
-            <div className="absolute bottom-full w-full border rounded bg-white">
+            <div className="absolute top-full w-full border rounded bg-white">
               <HistoryList
                 historyList={activeItems}
                 selectedIndex={dropdown.selectedIndex}

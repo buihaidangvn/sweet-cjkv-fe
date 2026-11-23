@@ -1,9 +1,64 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import { useJapaneseWordSuggest } from "../hook/useJapaneseWordSuggest";
 import { useClickOutside } from "@/app/hook/useClickOutside";
 import SuggestList from "./SuggestList";
 import HistoryList from "./HistoryList";
+
+type DropdownState = {
+  type: "closed" | "history" | "suggest";
+  selectedIndex: number | null;
+};
+
+type Action =
+  | { type: "OPEN"; list: "history" | "suggest" }
+  | { type: "CLOSE" }
+  | { type: "MOVE"; direction: 1 | -1; itemCount: number }
+  | { type: "RESET_SELECTION" };
+
+const initialState: DropdownState = {
+  type: "closed",
+  selectedIndex: null,
+};
+
+function dropdownReducer(state: DropdownState, action: Action): DropdownState {
+  switch (action.type) {
+    case "OPEN":
+      return {
+        type: action.list,
+        selectedIndex: null,
+      };
+
+    case "CLOSE":
+      return initialState;
+
+    case "RESET_SELECTION":
+      return {
+        ...state,
+        selectedIndex: null,
+      };
+
+    case "MOVE": {
+      if (action.itemCount === 0) return state;
+
+      const current = state.selectedIndex;
+
+      return {
+        ...state,
+        selectedIndex:
+          current === null
+            ? action.direction === 1
+              ? 0
+              : action.itemCount - 1
+            : (current + action.direction + action.itemCount) %
+              action.itemCount,
+      };
+    }
+
+    default:
+      return state;
+  }
+}
 
 type Props = {
   query: string;
@@ -24,24 +79,28 @@ export function SearchForm({
 }: Props) {
   const [input, setInput] = useState(query);
   const { suggestlist } = useJapaneseWordSuggest(input, 500);
-  const [showList, setShowList] = useState<null | "history" | "suggest">(null);
-  const [currentSelect, setCurrentSelect] = useState<number | null>(null);
+  const [dropdown, dispatch] = useReducer(dropdownReducer, initialState);
 
-  const inverseSuggestList = useMemo(() => {
-    if (!suggestlist) return suggestlist;
-    return [...suggestlist].reverse();
-  }, [suggestlist]);
-  const inverseHistoryList = useMemo(() => {
-    return [...history].reverse();
-  }, [history]);
+  const activeItems = useMemo(() => {
+    if (dropdown.type === "suggest") {
+      return (suggestlist ?? []).slice().reverse();
+    }
+
+    if (dropdown.type === "history") {
+      return history.slice().reverse();
+    }
+
+    return [];
+  }, [dropdown.type, suggestlist, history]);
 
   useEffect(() => {
-    setCurrentSelect(null);
+    dispatch({ type: "RESET_SELECTION" });
   }, [suggestlist, history]);
 
   const divRef = useClickOutside(() => {
-    setShowList(null);
-    setCurrentSelect(null);
+    dispatch({
+      type: "CLOSE",
+    });
   });
 
   useEffect(() => {
@@ -49,61 +108,58 @@ export function SearchForm({
   }, [query]);
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setShowList(null);
-    setCurrentSelect(null);
     const value = input.trim();
+    if (!value) return;
+    e.preventDefault();
+    dispatch({
+      type: "CLOSE",
+    });
     onSubmit(value);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Escape") {
       e.preventDefault();
-      if (showList !== null) {
-        setShowList(null);
+      if (dropdown.type !== "closed") {
+        dispatch({
+          type: "CLOSE",
+        });
       } else {
         searchInputRef.current?.blur();
       }
       return;
     }
 
-    const itemCount =
-      showList === "suggest"
-        ? (inverseSuggestList?.length ?? 0)
-        : showList === "history"
-          ? inverseHistoryList.length
-          : 0;
-    if (!itemCount) return;
+    if (!activeItems.length) return;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setCurrentSelect((current) =>
-        current === null ? 0 : (current + 1) % itemCount,
-      );
+      dispatch({
+        type: "MOVE",
+        direction: 1,
+        itemCount: activeItems.length,
+      });
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setCurrentSelect((current) =>
-        current === null
-          ? itemCount - 1
-          : (current - 1 + itemCount) % itemCount,
-      );
-    } else if (e.key === "Enter" && currentSelect !== null) {
-      if (showList === "suggest") {
-        const selected = inverseSuggestList?.[currentSelect];
-        if (!selected) return;
-        e.preventDefault();
-        searchInputRef.current?.blur();
+      dispatch({
+        type: "MOVE",
+        direction: -1,
+        itemCount: activeItems.length,
+      });
+    } else if (e.key === "Enter" && dropdown.selectedIndex !== null) {
+      const selected = activeItems[dropdown.selectedIndex];
+      if (!selected) return;
+      e.preventDefault();
+      searchInputRef.current?.blur();
+      if (dropdown.type === "suggest" && typeof selected !== "string") {
         onSubmit(selected.word);
-      } else if (showList === "history") {
-        const selected = inverseHistoryList[currentSelect];
-        if (!selected) return;
-        e.preventDefault();
-        searchInputRef.current?.blur();
+      } else if (dropdown.type === "history" && typeof selected === "string") {
         onSubmit(selected);
       }
 
-      setShowList(null);
-      setCurrentSelect(null);
+      dispatch({
+        type: "CLOSE",
+      });
     }
   }
 
@@ -118,61 +174,66 @@ export function SearchForm({
           value={input}
           onKeyDown={handleKeyDown}
           onFocus={() => {
-            setCurrentSelect(null);
-            if (input.trim().length) {
-              setShowList("suggest");
-            } else {
-              setShowList("history");
-            }
+            dispatch({
+              type: "OPEN",
+              list: !!input.trim().length ? "suggest" : "history",
+            });
           }}
           onChange={(e) => {
             const nextInput = e.target.value;
             setInput(nextInput);
-            setCurrentSelect(null);
-            if (nextInput) {
-              setShowList("suggest");
-            } else {
-              setShowList("history");
-            }
+            dispatch({
+              type: "OPEN",
+              list: !!nextInput.length ? "suggest" : "history",
+            });
           }}
           className="w-full border rounded p-1 px-2 grow"
         />
 
-        {showList === "suggest" && !!inverseSuggestList?.length && (
-          <div className="absolute bottom-full w-full border rounded bg-white">
-            <SuggestList
-              suggestList={inverseSuggestList}
-              selectedIndex={currentSelect}
-              onSuggestListItemClick={(suggest) => {
-                onSubmit(suggest.word);
-                setShowList(null);
-                setCurrentSelect(null);
-              }}
-            />
-          </div>
-        )}
+        {dropdown.type === "suggest" &&
+          !!activeItems.every((i) => typeof i !== "string") &&
+          !!activeItems.length && (
+            <div className="absolute bottom-full w-full border rounded bg-white">
+              <SuggestList
+                suggestList={activeItems}
+                selectedIndex={dropdown.selectedIndex}
+                onSuggestListItemClick={(suggest) => {
+                  onSubmit(suggest.word);
+                  dispatch({
+                    type: "CLOSE",
+                  });
+                }}
+              />
+            </div>
+          )}
 
-        {showList === "history" && (
-          <div className="absolute bottom-full w-full border rounded bg-white">
-            <HistoryList
-              historyList={inverseHistoryList}
-              selectedIndex={currentSelect}
-              onHistoryItemClick={(item) => {
-                onSubmit(item);
-                setShowList(null);
-                setCurrentSelect(null);
-              }}
-              onHistoryItemDeleteClick={(item) => {
-                onRemoveHistory(item);
-                setCurrentSelect(null);
-              }}
-              onClearAllClick={() => {
-                onClearHistory();
-                setCurrentSelect(null);
-              }}
-            />
-          </div>
-        )}
+        {dropdown.type === "history" &&
+          !!activeItems.every((i) => typeof i === "string") && (
+            <div className="absolute bottom-full w-full border rounded bg-white">
+              <HistoryList
+                historyList={activeItems}
+                selectedIndex={dropdown.selectedIndex}
+                onHistoryItemClick={(item) => {
+                  onSubmit(item);
+                  dispatch({
+                    type: "CLOSE",
+                  });
+                }}
+                onHistoryItemDeleteClick={(item) => {
+                  onRemoveHistory(item);
+                  dispatch({
+                    type: "RESET_SELECTION",
+                  });
+                }}
+                onClearAllClick={() => {
+                  onClearHistory();
+                  dispatch({
+                    type: "RESET_SELECTION",
+                  });
+                }}
+              />
+            </div>
+          )}
       </div>
 
       <button

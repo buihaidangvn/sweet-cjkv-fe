@@ -5,10 +5,12 @@ import { useJapaneseSearch } from "../hook/useJapaneseSearch";
 import { SearchForm } from "./SearchForm";
 import { SearchResult } from "./SearchResult";
 import { useEffect, useRef } from "react";
+import { useSearchHistory } from "@/app/hook/useSearchHistory";
 
 export function SearchPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") ?? "";
+  const searchHistory = useSearchHistory();
 
   const { result, loading, error } = useJapaneseSearch(query);
 
@@ -16,6 +18,7 @@ export function SearchPage() {
     const params = new URLSearchParams(searchParams.toString());
     params.set("query", newQuery);
     window.history.replaceState(null, "", `?${params.toString()}`);
+    searchHistory.add(newQuery);
   }
 
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -54,6 +57,9 @@ export function SearchPage() {
         query={query}
         onSubmit={handleSearch}
         searchInputRef={searchInputRef}
+        history={searchHistory.history}
+        onClearHistory={searchHistory.clear}
+        onRemoveHistory={searchHistory.remove}
       />
     </div>
   );

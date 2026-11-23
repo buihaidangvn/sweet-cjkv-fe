@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Suspense } from "react";
 import { SearchPage } from "./japanese/component/SearchPage";
 import Nav from "./nav/nav";

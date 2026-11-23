@@ -33,6 +33,7 @@ function dropdownReducer(state: DropdownState, action: Action): DropdownState {
       return initialState;
 
     case "RESET_SELECTION":
+      if (state.selectedIndex === null) return state;
       return {
         ...state,
         selectedIndex: null,
@@ -43,6 +44,8 @@ function dropdownReducer(state: DropdownState, action: Action): DropdownState {
 
       const current = state.selectedIndex;
 
+      // ArrowDown on the last item goes to the first item.
+      // ArrowUp on the first item goes to the last item.
       return {
         ...state,
         selectedIndex:
@@ -95,6 +98,7 @@ export function SearchForm({
 
   useEffect(() => {
     dispatch({ type: "RESET_SELECTION" });
+    /// Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
   }, [suggestlist, history]);
 
   const divRef = useClickOutside(() => {
@@ -104,6 +108,7 @@ export function SearchForm({
   });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setInput(query);
   }, [query]);
 

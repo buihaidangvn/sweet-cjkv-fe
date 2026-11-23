@@ -5,6 +5,7 @@ export function useSearchHistory() {
   const [history, setHistory] = useState<string[]>([]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHistory(searchHistoryService.getAll());
   }, []);
 

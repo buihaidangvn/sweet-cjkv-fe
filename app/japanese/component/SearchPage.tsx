@@ -15,8 +15,11 @@ export function SearchPage() {
   const { result, loading, error } = useJapaneseSearch(query);
 
   function handleSearch(newQuery: string): void {
+    if (newQuery === query) return;
+
     const params = new URLSearchParams(searchParams.toString());
     params.set("query", newQuery);
+
     window.history.replaceState(null, "", `?${params.toString()}`);
     searchHistory.add(newQuery);
   }

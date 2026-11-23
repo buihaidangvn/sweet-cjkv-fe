@@ -9,7 +9,7 @@ export function calculateAccentBorder(
   const nextAccent = accent?.at(moraIndex + 1);
   if (!nextAccent) return "";
 
-  let classArr: string[] = [];
+  const classArr: string[] = [];
   switch (correspongingAccent) {
     case "H":
       classArr.push("border-t");

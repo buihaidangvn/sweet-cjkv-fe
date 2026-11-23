@@ -14,7 +14,6 @@ export function useJapaneseSearch(query: string) {
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  const api = new JapaneseApi(configuration);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -32,6 +31,7 @@ export function useJapaneseSearch(query: string) {
       setError(null);
 
       try {
+        const api = new JapaneseApi(configuration);
         const { data } = await api.searchWord(query, {
           signal: controller.signal,
         });

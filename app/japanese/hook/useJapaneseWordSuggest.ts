@@ -8,21 +8,20 @@ import {
 } from "@/app/generated-api";
 import { configuration } from "@/app/api/client";
 
+const EMPTY_SUGGESTIONS: JapaneseSuggestWordResponseDto[] = [];
+
 export function useJapaneseWordSuggest(query: string, debounceMs: number) {
   const [suggestlist, setSuggestlist] = useState<
     JapaneseSuggestWordResponseDto[] | null
   >(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  const api = new JapaneseApi(configuration);
+
+  const normalizedQuery = query.trim();
 
   useEffect(() => {
-    if (!query.trim()) {
-      setSuggestlist([]);
-      setLoading(false);
-      setError(null);
-      return;
-    }
+    if (!normalizedQuery) return;
+
     const controller = new AbortController();
 
     const timer = setTimeout(async () => {
@@ -30,7 +29,8 @@ export function useJapaneseWordSuggest(query: string, debounceMs: number) {
       setError(null);
 
       try {
-        const { data } = await api.suggestWord(query, {
+        const api = new JapaneseApi(configuration);
+        const { data } = await api.suggestWord(normalizedQuery, {
           signal: controller.signal,
         });
 
@@ -39,7 +39,6 @@ export function useJapaneseWordSuggest(query: string, debounceMs: number) {
         if (axios.isAxiosError(err) && err.response?.status === 404) {
           setSuggestlist([]);
         } else if (!controller.signal.aborted) {
-          console.log(err);
           setError(err);
         }
       } finally {
@@ -53,7 +52,11 @@ export function useJapaneseWordSuggest(query: string, debounceMs: number) {
       controller.abort();
       clearTimeout(timer);
     };
-  }, [query]);
+  }, [normalizedQuery, debounceMs]);
 
-  return { suggestlist, loading, error };
+  return {
+    suggestlist: normalizedQuery ? suggestlist : EMPTY_SUGGESTIONS,
+    loading: normalizedQuery ? loading : false,
+    error: normalizedQuery ? error : null,
+  };
 }

@@ -24,6 +24,7 @@ export function SearchPage() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (!searchInputRef.current) return;
       if (
         event.key === "/" &&
         !(event.target instanceof HTMLInputElement) &&
@@ -31,7 +32,11 @@ export function SearchPage() {
         !(event.target instanceof HTMLSelectElement)
       ) {
         event.preventDefault();
-        searchInputRef.current?.focus();
+        searchInputRef.current.focus();
+
+        // move cursor to the end
+        const length = searchInputRef.current.value.length;
+        searchInputRef.current.setSelectionRange(length, length);
       }
     };
 

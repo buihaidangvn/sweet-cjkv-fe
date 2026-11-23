@@ -41,6 +41,30 @@ export function SearchForm({
     setInput(query);
   }, [query]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.key !== "Escape" ||
+        document.activeElement !== searchInputRef.current
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      if (shouldShowSuggestOrHistoryList) {
+        setShouldShowSuggestOrHistoryList(false);
+      } else {
+        searchInputRef.current?.blur();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [searchInputRef, shouldShowSuggestOrHistoryList]);
+
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setShouldShowSuggestOrHistoryList(false);

@@ -19,7 +19,7 @@ export default function HistoryList({
         <span className="px-2 py-1">History / lịch sử</span>
         <button
           type="button"
-          className="px-4 py-1 hover:bg-gray-100"
+          className="px-4 py-1 hover:bg-gray-100 dark:hover:bg-gray-800"
           onClick={onClearAllClick}
         >
           Clear
@@ -34,8 +34,8 @@ export default function HistoryList({
         historyList.map((item, index) => (
           <div key={index} className="flex align-middle justify-between">
             <div
-              className={`p-2 grow hover:bg-gray-100 ${
-                selectedIndex === index ? "bg-gray-100" : ""
+              className={`p-2 grow hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                selectedIndex === index ? "bg-gray-100 dark:bg-gray-800" : ""
               }`}
               onClick={() => onHistoryItemClick(item)}
             >
@@ -43,7 +43,7 @@ export default function HistoryList({
             </div>
             <button
               type="button"
-              className="px-4 py-2 hover:bg-gray-100"
+              className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
               onClick={() => onHistoryItemDeleteClick(item)}
             >
               X

@@ -198,7 +198,7 @@ export function SearchForm({
         {dropdown.type === "suggest" &&
           !!activeItems.every((i) => typeof i !== "string") &&
           !!activeItems.length && (
-            <div className="absolute top-full w-full border rounded bg-white">
+            <div className="absolute top-full w-full border rounded bg-white dark:bg-black">
               <SuggestList
                 suggestList={activeItems}
                 selectedIndex={dropdown.selectedIndex}
@@ -214,7 +214,7 @@ export function SearchForm({
 
         {dropdown.type === "history" &&
           !!activeItems.every((i) => typeof i === "string") && (
-            <div className="absolute top-full w-full border rounded bg-white">
+            <div className="absolute top-full w-full border rounded bg-white dark:bg-black">
               <HistoryList
                 historyList={activeItems}
                 selectedIndex={dropdown.selectedIndex}
@@ -244,7 +244,7 @@ export function SearchForm({
       <button
         type="submit"
         disabled={!input.trim()}
-        className="border rounded p-1 px-2 hover:bg-blue-300 focus:outline-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="border rounded p-1 px-2 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Search
       </button>

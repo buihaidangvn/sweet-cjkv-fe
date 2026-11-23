@@ -20,6 +20,8 @@ export function SearchPage() {
     const params = new URLSearchParams(searchParams.toString());
     params.set("query", newQuery);
 
+    searchInputRef.current?.blur();
+
     window.history.replaceState(null, "", `?${params.toString()}`);
     searchHistory.add(newQuery);
   }

@@ -15,8 +15,8 @@ export default function SuggestList({
       {suggestList.map((suggest, index) => (
         <div
           key={index}
-          className={`p-2 hover:bg-gray-100 ${
-            selectedIndex === index ? "bg-gray-100" : ""
+          className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-800 ${
+            selectedIndex === index ? "bg-gray-100 dark:bg-gray-800" : ""
           }`}
           onClick={() => onSuggestListItemClick(suggest)}
         >

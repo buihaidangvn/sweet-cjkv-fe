@@ -2,6 +2,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useJapaneseWordSuggest } from "../hook/useJapaneseWordSuggest";
 import { useClickOutside } from "@/app/hook/useClickOutside";
+import SuggestList from "./SuggestList";
+import HistoryList from "./HistoryList";
 
 type Props = {
   query: string;
@@ -67,69 +69,29 @@ export function SearchForm({
           shouldShowSuggestOrHistoryList &&
           !!inverseSuggestList?.length && (
             <div className="absolute bottom-full w-full border rounded bg-white">
-              {inverseSuggestList.map((suggest, index) => (
-                <div
-                  key={index}
-                  className=" hover:bg-gray-100 p-2"
-                  onClick={() => {
-                    onSubmit(suggest.word);
-                    setShouldShowSuggestOrHistoryList(false);
-                  }}
-                >
-                  <b>{suggest.word}</b>
-                  {suggest.phonetic && (
-                    <>
-                      &nbsp;
-                      <span className="text-sm">{suggest.phonetic}</span>
-                    </>
-                  )}
-                  {suggest.mean && (
-                    <>
-                      &nbsp;
-                      <span className="text-sm">{suggest.mean}</span>
-                    </>
-                  )}
-                </div>
-              ))}
+              <SuggestList
+                suggestList={inverseSuggestList}
+                onSuggestListItemClick={(suggest) => {
+                  onSubmit(suggest.word);
+                  setShouldShowSuggestOrHistoryList(false);
+                }}
+              />
             </div>
           )}
 
-        {!input.length &&
-          shouldShowSuggestOrHistoryList &&
-          !!history.length && (
-            <div className="absolute bottom-full w-full border rounded bg-white">
-              <div className="flex justify-between">
-                <span className="py-1">History / lịch sử</span>
-                <button
-                  type="button"
-                  className="px-4 py-1 hover:bg-gray-100"
-                  onClick={onClearHistory}
-                >
-                  Clear
-                </button>
-              </div>
-              {inverseHistoryList.map((item, index) => (
-                <div key={index} className="flex align-middle justify-between">
-                  <div
-                    className=" hover:bg-gray-100 p-2 grow"
-                    onClick={() => {
-                      onSubmit(item);
-                      setShouldShowSuggestOrHistoryList(false);
-                    }}
-                  >
-                    <b>{item}</b>
-                  </div>
-                  <button
-                    type="button"
-                    className="px-4 py-2 hover:bg-gray-100"
-                    onClick={() => onRemoveHistory(item)}
-                  >
-                    X
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+        {!input.length && shouldShowSuggestOrHistoryList && (
+          <div className="absolute bottom-full w-full border rounded bg-white">
+            <HistoryList
+              historyList={inverseHistoryList}
+              onHistoryItemClick={(item) => {
+                onSubmit(item);
+                setShouldShowSuggestOrHistoryList(false);
+              }}
+              onHistoryItemDeleteClick={(item) => onRemoveHistory(item)}
+              onClearAllClick={onClearHistory}
+            />
+          </div>
+        )}
       </div>
 
       <button

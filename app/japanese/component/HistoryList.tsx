@@ -1,5 +1,6 @@
 type Props = {
   historyList: string[];
+  selectedIndex: number | null;
   onHistoryItemClick: (item: string) => void;
   onHistoryItemDeleteClick: (item: string) => void;
   onClearAllClick: () => void;
@@ -7,6 +8,7 @@ type Props = {
 
 export default function HistoryList({
   historyList,
+  selectedIndex,
   onHistoryItemClick,
   onClearAllClick,
   onHistoryItemDeleteClick,
@@ -32,7 +34,9 @@ export default function HistoryList({
         historyList.map((item, index) => (
           <div key={index} className="flex align-middle justify-between">
             <div
-              className=" hover:bg-gray-100 p-2 grow"
+              className={`p-2 grow hover:bg-gray-100 ${
+                selectedIndex === index ? "bg-gray-100" : ""
+              }`}
               onClick={() => onHistoryItemClick(item)}
             >
               <b>{item}</b>

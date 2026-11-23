@@ -2,10 +2,12 @@ import { JapaneseSuggestWordResponseDto } from "@/app/generated-api";
 
 type Props = {
   suggestList: JapaneseSuggestWordResponseDto[];
+  selectedIndex: number | null;
   onSuggestListItemClick: (suggest: JapaneseSuggestWordResponseDto) => void;
 };
 export default function SuggestList({
   suggestList,
+  selectedIndex,
   onSuggestListItemClick,
 }: Props) {
   return (
@@ -13,7 +15,9 @@ export default function SuggestList({
       {suggestList.map((suggest, index) => (
         <div
           key={index}
-          className=" hover:bg-gray-100 p-2"
+          className={`p-2 hover:bg-gray-100 ${
+            selectedIndex === index ? "bg-gray-100" : ""
+          }`}
           onClick={() => onSuggestListItemClick(suggest)}
         >
           <b>{suggest.word}</b>

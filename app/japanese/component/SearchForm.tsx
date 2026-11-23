@@ -23,53 +23,88 @@ export function SearchForm({
   onRemoveHistory,
 }: Props) {
   const [input, setInput] = useState(query);
-  const { suggestlist, loading, error } = useJapaneseWordSuggest(input, 500);
+  const { suggestlist } = useJapaneseWordSuggest(input, 500);
+  const [showList, setShowList] = useState<null | "history" | "suggest">(null);
+  const [currentSelect, setCurrentSelect] = useState<number | null>(null);
+
   const inverseSuggestList = useMemo(() => {
     if (!suggestlist) return suggestlist;
     return [...suggestlist].reverse();
   }, [suggestlist]);
   const inverseHistoryList = useMemo(() => {
     return [...history].reverse();
-  }, [suggestlist]);
-  const [shouldShowSuggestOrHistoryList, setShouldShowSuggestOrHistoryList] =
-    useState(false);
+  }, [history]);
+
+  useEffect(() => {
+    setCurrentSelect(null);
+  }, [suggestlist, history]);
+
   const divRef = useClickOutside(() => {
-    setShouldShowSuggestOrHistoryList(false);
+    setShowList(null);
+    setCurrentSelect(null);
   });
 
   useEffect(() => {
     setInput(query);
   }, [query]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.key !== "Escape" ||
-        document.activeElement !== searchInputRef.current
-      ) {
-        return;
-      }
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setShowList(null);
+    setCurrentSelect(null);
+    const value = input.trim();
+    onSubmit(value);
+  }
 
-      event.preventDefault();
-      if (shouldShowSuggestOrHistoryList) {
-        setShouldShowSuggestOrHistoryList(false);
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      if (showList !== null) {
+        setShowList(null);
       } else {
         searchInputRef.current?.blur();
       }
-    };
+      return;
+    }
 
-    window.addEventListener("keydown", handleKeyDown);
+    const itemCount =
+      showList === "suggest"
+        ? (inverseSuggestList?.length ?? 0)
+        : showList === "history"
+          ? inverseHistoryList.length
+          : 0;
+    if (!itemCount) return;
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [searchInputRef, shouldShowSuggestOrHistoryList]);
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setCurrentSelect((current) =>
+        current === null ? 0 : (current + 1) % itemCount,
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setCurrentSelect((current) =>
+        current === null
+          ? itemCount - 1
+          : (current - 1 + itemCount) % itemCount,
+      );
+    } else if (e.key === "Enter" && currentSelect !== null) {
+      if (showList === "suggest") {
+        const selected = inverseSuggestList?.[currentSelect];
+        if (!selected) return;
+        e.preventDefault();
+        searchInputRef.current?.blur();
+        onSubmit(selected.word);
+      } else if (showList === "history") {
+        const selected = inverseHistoryList[currentSelect];
+        if (!selected) return;
+        e.preventDefault();
+        searchInputRef.current?.blur();
+        onSubmit(selected);
+      }
 
-  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setShouldShowSuggestOrHistoryList(false);
-    const value = input.trim();
-    onSubmit(value);
+      setShowList(null);
+      setCurrentSelect(null);
+    }
   }
 
   return (
@@ -81,38 +116,60 @@ export function SearchForm({
           name="searchQuery"
           autoComplete="off"
           value={input}
-          onFocus={() => setShouldShowSuggestOrHistoryList(true)}
+          onKeyDown={handleKeyDown}
+          onFocus={() => {
+            setCurrentSelect(null);
+            if (input.trim().length) {
+              setShowList("suggest");
+            } else {
+              setShowList("history");
+            }
+          }}
           onChange={(e) => {
-            setShouldShowSuggestOrHistoryList(true);
-            setInput(e.target.value);
+            const nextInput = e.target.value;
+            setInput(nextInput);
+            setCurrentSelect(null);
+            if (nextInput) {
+              setShowList("suggest");
+            } else {
+              setShowList("history");
+            }
           }}
           className="w-full border rounded p-1 px-2 grow"
         />
 
-        {!!input.length &&
-          shouldShowSuggestOrHistoryList &&
-          !!inverseSuggestList?.length && (
-            <div className="absolute bottom-full w-full border rounded bg-white">
-              <SuggestList
-                suggestList={inverseSuggestList}
-                onSuggestListItemClick={(suggest) => {
-                  onSubmit(suggest.word);
-                  setShouldShowSuggestOrHistoryList(false);
-                }}
-              />
-            </div>
-          )}
+        {showList === "suggest" && !!inverseSuggestList?.length && (
+          <div className="absolute bottom-full w-full border rounded bg-white">
+            <SuggestList
+              suggestList={inverseSuggestList}
+              selectedIndex={currentSelect}
+              onSuggestListItemClick={(suggest) => {
+                onSubmit(suggest.word);
+                setShowList(null);
+                setCurrentSelect(null);
+              }}
+            />
+          </div>
+        )}
 
-        {!input.length && shouldShowSuggestOrHistoryList && (
+        {showList === "history" && (
           <div className="absolute bottom-full w-full border rounded bg-white">
             <HistoryList
               historyList={inverseHistoryList}
+              selectedIndex={currentSelect}
               onHistoryItemClick={(item) => {
                 onSubmit(item);
-                setShouldShowSuggestOrHistoryList(false);
+                setShowList(null);
+                setCurrentSelect(null);
               }}
-              onHistoryItemDeleteClick={(item) => onRemoveHistory(item)}
-              onClearAllClick={onClearHistory}
+              onHistoryItemDeleteClick={(item) => {
+                onRemoveHistory(item);
+                setCurrentSelect(null);
+              }}
+              onClearAllClick={() => {
+                onClearHistory();
+                setCurrentSelect(null);
+              }}
             />
           </div>
         )}
